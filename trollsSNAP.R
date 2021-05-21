@@ -46,14 +46,17 @@ adj <- as.matrix.network.adjacency(trolls2)
 
 gplot(trolls2)
 # make a cov table
-changeinfoll <- get.vertex.attribute(trolls2, "maxfollowers") - get.vertex.attribute(trolls2, "minfollowers")
+changeinfollowers <- get.vertex.attribute(trolls2, "maxfollowers") - get.vertex.attribute(trolls2, "minfollowers")
 
 colnames(covs) <- c("minfollowers",
-                   "maxfollowers", ...)
+                   "maxfollowers",
+                   "changeinfollowers",...)
 
 head(covs)
 
-
+# determine outcome for ALAAM
+    # above average change in followers
+threshold <- mean(changeinfollowers)
 
 # install.packages("mvtnorm")
 library(mvtnorm)
