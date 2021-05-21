@@ -15,8 +15,6 @@ library(sna)
 load("trolls.Rdata")
 filter.
 
-# hello
-
 ###############################################################################
 # Plot
 ###############################################################################
@@ -30,6 +28,32 @@ dev.off()
 ###############################################################################
 # ALAAM
 ###############################################################################
+
+library(networks)
+
+trolls (network)
+# create subgraph and filter trolls
+name <- get.vertex.attribute(trolls, "vertex.names")
+cat <- get.vertex.attribute(trolls, "accountcategory")
+df <- data.frame(name = name, cat = cat)
+# get a list of vertices of specific categories
+# pass that list of names/vertex ids to get induced Subgraph
+v <- df[(df$cat%in%c("RightTroll","LeftTroll","FearMonger")), "name"]
+trolls1 <- get.inducedSubgraph(trolls, v)
+trolls2 <- get.inducedSubgraph(trolls,v=which(trolls %v% "accountcategory"%in%c("RightTroll","LeftTroll","FearMonger","NewsFeed","HashtagGamer")))
+# make an adjacency matrix of network
+adj <- as.matrix.network.adjacency(trolls2)
+
+gplot(trolls2)
+# make a cov table
+changeinfoll <- get.vertex.attribute(trolls2, "maxfollowers") - get.vertex.attribute(trolls2, "minfollowers")
+
+colnames(covs) <- c("minfollowers",
+                   "maxfollowers", ...)
+
+head(covs)
+
+
 
 # install.packages("mvtnorm")
 library(mvtnorm)
