@@ -348,7 +348,7 @@ res.lt4 <- res.rt #6850
 # SACF10 - reciprocation
 # SACF30 - activity, reciprocation
 
-ltmodel <- res.lt
+ltmodel <- res.lt #6000
 
 #####
 saveRDS(ltmodel, file = "./.ltmodel.rds")
@@ -360,18 +360,18 @@ model <- readRDS("./.rtmodel.rds")
 model <- readRDS("./.ltmodel.rds")
 
 # Plot the MCMC output in trace plots 
-plot(ts(res.rt4$Thetas))
+plot(ts(model$Thetas))
 
 # Obtain the model results
 write.res.table(burnin=1, # should be set sufficiently high
-                datamat=res.rt4$Thetas, # the result from BayesALAAM
+                datamat=model$Thetas, # the result from BayesALAAM
                 thin=1, # should be set so that SACF is sufficiently low, 
                 # important for Confidence Intervals
                 tabname=NULL) # the name appended to the table that is saved
 
 # Draw posterior samples from model for GOF tests
 sim.rt <- get.gof.distribution(NumIterations=500, # number of vectors to draw
-                               res=res.rt4, # the ALAAM estimation object that contains model and results
+                               res=model, # the ALAAM estimation object that contains model and results
                                burnin=100, # no. iterations discarded from GOF distribution
                                thinning = 1000) #, # no. iterations between sample points
 # contagion ='none') # should be the same as for model fitted
