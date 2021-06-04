@@ -10,22 +10,22 @@
 ###############################################################################
 # install.packages("ggplot2")
 library(ggplot2)
-# install.packages("stringr")
-library(stringr)
+# install.packages("network")
+library(network)
+# install.packages("igraph")
+library(igraph)
 # install.packages("sna")
-library(sna)
+# library(sna)
 # install.packages("mvtnorm")
 library(mvtnorm)
 # install.packages("xtable")
 library(xtable)
-# install.packages("network")
-library(network)
+
 # install.packages("CINNA")
-library(CINNA)
+# library(CINNA)
 # install.packages("intergraph")
-library(intergraph)
-# install.packages("igraph")
-library(igraph)
+# library(intergraph)
+
 
 source('MultivarALAAMalt.R')
 
@@ -248,7 +248,8 @@ gplot(adj.lefttroll)
 ##### 
 # Prepare ALAAM covariates
 #####
-# Creating context-specific covariates for covs table that will be used for ALAAM ()
+# Creating context-specific covariates for covs table that will be used for ALAAM
+library(network)
 accountcategory <- get.vertex.attribute(trollssample.lefttroll,"accountcategory")
 names <- get.vertex.attribute(trollssample.lefttroll,"vertex.names")
 activity <- get.vertex.attribute(trollssample.lefttroll,"activity")
@@ -320,7 +321,7 @@ res.lt <- BayesALAAM(y = fg.lefttroll, # median-based dependent variable
                      ADJ = adj.lefttroll,           # network
                      covariates = covs.lefttroll[,c(1,6,7,8,11,14)],   # covariates
                      directed = TRUE,     # directed / undirecred network
-                     Iterations = 6000,   # number of iterations
+                     Iterations = 4000,   # number of iterations
                      saveFreq = 500)   # print and save frequency
 
 ## you can improve the mixing by using a better proposal covariance
