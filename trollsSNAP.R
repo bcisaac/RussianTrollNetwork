@@ -9,22 +9,22 @@
 # Install and Load Trolls Libraries
 ###############################################################################
 # install.packages("ggplot2")
-library(ggplot2)
-# install.packages("network")
-library(network)
+library(ggplot2) # not sure if this is needed
 # install.packages("igraph")
-library(igraph)
+library(igraph) # needed for taking giant component of network
+# install.packages("network")
+library(network) # needed for working with trolls.Rdata and making ALAAM
 # install.packages("sna")
-# library(sna)
+library(sna) # needed for gplot()
 # install.packages("mvtnorm")
-library(mvtnorm)
+library(mvtnorm) # not sure if this is needed
 # install.packages("xtable")
-library(xtable)
+library(xtable) # not sure if this is needed, maybe for GOF?
 
 # install.packages("CINNA")
 # library(CINNA)
 # install.packages("intergraph")
-# library(intergraph)
+library(intergraph)
 
 
 source('MultivarALAAMalt.R')
@@ -170,37 +170,7 @@ Propsigma <- cov(res.rt$Thetas)
 ##### 
 # Temporary Model Storage
 ##### 
-# good models w/ isolates and median
-res.rt1 <- res.rt #6500
-  # ESS - intercept, outdegree, twopath
-  # SACF10 - intercept, contagion, outdegree, twopath
-  # SACF30 -
-res.rt2 <- res.rt #6800
-# ESS - 
-# SACF10 - outdegree, reciprocation
-# SACF30 - intercept, indegree, outdegree, reciprocation
-res.rt3 <- res.rt #6900
-# ESS - 
-# SACF10 - intercept, activity
-# SACF30 - intercept, activity, outdegree, twopath
-res.rt4 <- res.rt #6850
-# ESS - 
-# SACF10 - reciprocation
-# SACF30 - activity, reciprocation
 
-# good models w/ component and mean
-res.rt5 <- res.rt
-# ESS - intercept, twopath, transitive
-# SACF10 - intercept, indegree, twopath, transitive
-# SACF30 - intercept, activity, indegree, twopath, transitive
-res.rt6 <- res.rt
-# ESS -
-# SACF10 - contagion, outdegree, reciprocation, twopath, transitive
-# SACF30 - contagion, indegree, outdegree, reciprocation, twopath, transitive
-res.rt7 <- res.rt # 6600
-# ESS - twopath, transitive
-# SACF10 - activity, outdegree, twopath, transitive
-# SACF30 - contagion, activity, indegree, outdegree, reciprocation, twopath, transitive
 res.rt8 <- res.rt # 6850
 # ESS - activity
 # SACF10 - 
@@ -227,7 +197,7 @@ delete.vertex.attribute(trollssample.lefttroll,"region")
 delete.vertex.attribute(trollssample.lefttroll,"language")
 lt <- asIgraph(trollssample.lefttroll)
 
-comp <- components(lt)
+comp <- clusters(lt)
 comp
 component.lefttroll <- lt %>%induced.subgraph(
   .,
@@ -249,7 +219,6 @@ gplot(adj.lefttroll)
 # Prepare ALAAM covariates
 #####
 # Creating context-specific covariates for covs table that will be used for ALAAM
-library(network)
 accountcategory <- get.vertex.attribute(trollssample.lefttroll,"accountcategory")
 names <- get.vertex.attribute(trollssample.lefttroll,"vertex.names")
 activity <- get.vertex.attribute(trollssample.lefttroll,"activity")
@@ -321,7 +290,7 @@ res.lt <- BayesALAAM(y = fg.lefttroll, # median-based dependent variable
                      ADJ = adj.lefttroll,           # network
                      covariates = covs.lefttroll[,c(1,6,7,8,11,14)],   # covariates
                      directed = TRUE,     # directed / undirecred network
-                     Iterations = 4000,   # number of iterations
+                     Iterations = 6000,   # number of iterations
                      saveFreq = 500)   # print and save frequency
 
 ## you can improve the mixing by using a better proposal covariance
@@ -332,24 +301,12 @@ Propsigma <- cov(res.lt$Thetas)
 # Temporary Model Storage
 #####
 # good models 
-res.lt1 <- res.lt #6700
-# ESS - twopath, transitive
-# SACF10 - activity, indegree, twopath, transitive
-# SACF30 - everything but contagion
-res.lt2 <- res.lt #6800
-# ESS - 
-# SACF10 - outdegree, reciprocation
-# SACF30 - intercept, indegree, outdegree, reciprocation
-res.lt3 <- res.lt #6900
-# ESS - 
-# SACF10 - intercept, activity
-# SACF30 - intercept, activity, outdegree, twopath
-res.lt4 <- res.rt #6850
-# ESS - 
-# SACF10 - reciprocation
-# SACF30 - activity, reciprocation
+res.lt1 <- res.lt #6500
+# ESS - reciprocation, twopath
+# SACF10 - reciprocation, twopath
+# SACF30 - intercept, contagion, indegree, outdegree, reciprocation, twopath, transitive
 
-ltmodel <- res.lt #6000
+ltmodel <- res.lt
 
 #####
 saveRDS(ltmodel, file = "./.ltmodel.rds")
@@ -359,6 +316,8 @@ saveRDS(ltmodel, file = "./.ltmodel.rds")
 # Read models
 model <- readRDS("./.rtmodel.rds")
 model <- readRDS("./.ltmodel.rds")
+
+model$ResTab
 
 # Plot the MCMC output in trace plots 
 plot(ts(model$Thetas))
